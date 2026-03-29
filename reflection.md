@@ -7,10 +7,21 @@
 - Briefly describe your initial UML design.
 - What classes did you include, and what responsibilities did you assign to each?
 
+I used Copilot to help brainstorm and draft a four-class UML diagram saved in `uml_draft.md`. The core relationship is: an Owner owns many Pets, each Pet holds many Tasks, and a Scheduler reads from the Owner to build a daily plan.
+
+The four classes and their responsibilities:
+
+- **Task** (dataclass): Stores everything about a single care activity — title, duration, priority, scheduled time, recurrence frequency, completion status, and which pet it belongs to. Responsible for determining if it fits in available time and managing its own completion/rescheduling.
+- **Pet** (dataclass): Holds a pet's profile (name, species, age, special needs) and its own list of tasks. Responsible for tagging tasks with the pet's name when they are added.
+- **Owner**: Manages a collection of pets and a master task list. Acts as the single source of truth for all care data; provides filtered views such as tasks for a specific pet.
+- **Scheduler**: The "brain" of the system. Reads from the Owner to build a time-sorted, priority-ordered daily plan; also handles filtering, conflict detection, and producing a human-readable schedule explanation.
+
 **b. Design changes**
 
 - Did your design change during implementation?
 - If yes, describe at least one change and why you made it.
+
+Yes, one notable change emerged during implementation. In the initial skeleton, tasks were stored only on the Owner's master task list. After reviewing the design with Copilot, I moved the primary task list onto Pet, so each pet owns its tasks directly. The Owner then provides an `all_tasks()` helper that aggregates across all pets. This made filtering by pet much cleaner and better reflected the real-world relationship — a walk belongs to Mochi, not just to Jordan.
 
 ---
 
